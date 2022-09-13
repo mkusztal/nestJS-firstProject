@@ -20,8 +20,10 @@ export class ProductsController {
   constructor(private productRepository: ProductsDataService) {}
 
   @Get()
-  getAllProducts(): ExternalProductDto {
-    return this.mapProductToExternal(this.productRepository.getAllProducts());
+  getAllProducts(): Array<ExternalProductDto> {
+    return this.productRepository
+      .getAllProducts()
+      .map(this.mapProductToExternal);
   }
 
   @Get(':id')
