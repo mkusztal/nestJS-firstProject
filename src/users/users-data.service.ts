@@ -3,7 +3,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { ExternalUserDto } from './dto/external-user.dto';
 import { User } from './interfaces/user.interface';
 import { v4 as uuidv4 } from 'uuid';
-import { dateToArray } from 'src/shared/helpers/date.helper';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()

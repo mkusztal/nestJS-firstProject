@@ -45,6 +45,7 @@ export class ProductsController {
   }
 
   @Put(':id')
+  @HttpCode(500)
   updateProduct(
     @Param('id') _id_: string,
     @Body() _item_: UpdateProductDto,
