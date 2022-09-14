@@ -35,7 +35,7 @@ export class ProductsController {
 
   @Post()
   addProduct(@Body() _item_: CreateProductDto): ExternalProductDto {
-    return this.mapProductToExternal(this.productRepository.addProduct(_item_));
+    return this.productRepository.addProduct(_item_);
   }
 
   @Delete(':id')
