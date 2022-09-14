@@ -36,7 +36,10 @@ export class ProductsDataService {
   updateProduct(_id_: string, _item_: UpdateProductDto): Product {
     const product = this.getProductById(_id_);
     const index = this.products.findIndex((_item_) => _item_.id === _id_);
-    this.products[index] = { ...product, ..._item_, updatedAt: new Date() };
+    this.products[index] = {
+      ...product,
+      ..._item_,
+    };
     return this.products[index];
   }
 
