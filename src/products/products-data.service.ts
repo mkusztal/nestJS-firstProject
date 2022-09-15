@@ -10,6 +10,8 @@ import { UpdateProductDto } from './dto/update-product.dto';
 export class ProductsDataService {
   private products: Array<Product> = [];
 
+  newId = uuidv4();
+
   getAllProducts(): Array<Product> {
     return this.products;
   }
@@ -21,7 +23,7 @@ export class ProductsDataService {
   addProduct(_item_: CreateProductDto): ExternalProductDto {
     const product: Product = {
       ..._item_,
-      id: uuidv4(),
+      id: this.newId,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
