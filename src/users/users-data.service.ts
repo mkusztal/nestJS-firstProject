@@ -4,6 +4,7 @@ import { ExternalUserDto } from './dto/external-user.dto';
 import { User } from './interfaces/user.interface';
 import { v4 as uuidv4 } from 'uuid';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Roles } from './enums/roles.enum';
 
 @Injectable()
 export class UsersDataService {
@@ -19,8 +20,12 @@ export class UsersDataService {
 
   addUser(_item_: CreateUserDto): ExternalUserDto {
     const user: User = {
-      ..._item_,
       id: uuidv4(),
+      firstName: _item_.firstName,
+      lastName: _item_.lastName,
+      email: _item_.email,
+      dateBirth: _item_.dateOfBirth,
+      role: _item_.role,
     };
 
     this.users.push(user);
