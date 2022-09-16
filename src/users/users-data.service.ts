@@ -4,7 +4,7 @@ import { ExternalUserDto } from './dto/external-user.dto';
 import { User } from './interfaces/user.interface';
 import { v4 as uuidv4 } from 'uuid';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Roles } from './enums/roles.enum';
+import { UserRequireUniqueEmailException } from './exception/unique-email-exception';
 
 @Injectable()
 export class UsersDataService {
@@ -19,6 +19,11 @@ export class UsersDataService {
   }
 
   addUser(_item_: CreateUserDto): ExternalUserDto {
+    const checkEmail = this.getUserByEmail(_item_.email);
+    if (checkEmail) {
+      throw new UserRequireUniqueEmailException();
+    }
+
     const user: User = {
       id: uuidv4(),
       firstName: _item_.firstName,
@@ -33,6 +38,10 @@ export class UsersDataService {
     return {
       ...user,
     };
+  }
+
+  getUserByEmail(email: string): User {
+    return this.users.find((user) => user.email === email);
   }
 
   updateUser(_id_: string, _item_: UpdateUserDto): User {
