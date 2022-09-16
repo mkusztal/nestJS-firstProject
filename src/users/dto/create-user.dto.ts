@@ -1,6 +1,6 @@
 import { Roles } from '../enums/roles.enum';
-import { Transform, Type, TransformFnParams } from 'class-transformer';
-import { arrayToDate } from '../../shared/helpers/date.helper';
+import { Type } from 'class-transformer';
+// import { arrayToDate } from '../../shared/helpers/date.helper';
 
 import {
   IsEmail,
@@ -20,14 +20,15 @@ export class CreateUserDto {
   @IsNotEmpty()
   email: string;
 
-  @Transform((d) => arrayToDate(d))
+  // @Transform((d) => arrayToDate(d))
+  @IsNotEmpty()
   dateOfBirth: Date;
 
   @ValidateNested({ each: true })
   @Type(() => CreateUserAddressDto)
   address?: Array<CreateUserAddressDto>;
 
-  @IsEnum(Roles)
+  @IsEnum(Roles, { each: true })
   role: Roles[];
 }
 
