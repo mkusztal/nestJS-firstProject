@@ -1,5 +1,5 @@
 import { Roles } from '../enums/roles.enum';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsEmail,
   IsNotEmpty,
@@ -7,6 +7,7 @@ import {
   IsNumber,
   IsEnum,
 } from 'class-validator';
+import { arrayToDate } from 'src/shared/helpers/date.helper';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -18,6 +19,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   email: string;
 
+  @Transform((d) => arrayToDate(d))
   dateOfBirth: Date;
 
   @ValidateNested({ each: true })
