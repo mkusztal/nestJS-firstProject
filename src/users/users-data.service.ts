@@ -19,12 +19,6 @@ export class UsersDataService {
   }
 
   addUser(_item_: CreateUserDto): ExternalUserDto {
-    const checkEmail = this.getUserByEmail(_item_.email);
-
-    if (checkEmail) {
-      throw new UserRequireUniqueEmailException();
-    }
-
     const user: User = {
       id: uuidv4(),
       firstName: _item_.firstName,
