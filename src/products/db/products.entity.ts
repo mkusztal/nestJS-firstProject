@@ -4,10 +4,10 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  //   ManyToMany,
-  //   JoinTable,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
-// import { Tag } from './tag.entity';
+import { Tag } from './tag.entity';
 
 @Entity({
   name: 'products',
@@ -35,4 +35,16 @@ export class Product {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
+
+  @ManyToMany((type) => Tag)
+  @JoinTable({
+    name: 'products_tags',
+    joinColumn: {
+      name: 'productId',
+    },
+    inverseJoinColumn: {
+      name: 'tagId',
+    },
+  })
+  tags: Tag[];
 }

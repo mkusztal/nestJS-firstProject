@@ -1,57 +1,76 @@
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { ExternalUserDto } from './dto/external-user.dto';
-import { User } from './interfaces/user.interface';
-import { v4 as uuidv4 } from 'uuid';
+import { CreateUserAddressDto, CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserRequireUniqueEmailException } from './exception/unique-email-exception';
+import { User } from './db/users.entity';
+import { UserRepository } from './db/user.repository';
+import { UserAddressRepository } from './db/userAddress.repository';
+import { UserAddress } from './db/userAddress.entity';
 
 @Injectable()
 export class UsersDataService {
+  constructor(
+    private userRepository: UserRepository,
+    private userAddressRepository: UserAddressRepository,
+  ) {}
+
   private users: Array<User> = [];
 
-  getAllUsers(): Array<User> {
-    return this.users;
+  async getAllUsers(): Promise<Array<User>> {
+    return this.userRepository.find();
   }
 
-  getUserById(id: string): User {
-    return this.users.find((user) => user.id === id);
+  async getUserById(id: string): Promise<User> {
+    return this.userRepository.findOne(id);
   }
 
-  addUser(_item_: CreateUserDto): ExternalUserDto {
-    const user: User = {
-      id: uuidv4(),
-      firstName: _item_.firstName,
-      lastName: _item_.lastName,
-      email: _item_.email,
-      dateBirth: _item_.dateOfBirth,
-      role: _item_.role,
-    };
+  async addUser(_item_: CreateUserDto): Promise<User> {
+    const userToSave = new User();
 
-    this.users.push(user);
+    userToSave.firstName = _item_.firstName;
+    userToSave.lastName = _item_.lastName;
+    userToSave.email = _item_.email;
+    //userToSave.role = _item_.role;
+    userToSave.address = await this.prepareUserAddressesToSave(_item_.address);
 
-    return {
-      ...user,
-    };
+    return this.userRepository.save(userToSave);
   }
 
   getUserByEmail(email: string): User {
     return this.users.find((user) => user.email === email);
   }
 
-  updateUser(_id_: string, _item_: UpdateUserDto): User {
-    const user = this.getUserById(_id_);
-    const index = this.users.findIndex((_item_) => _item_.id === _id_);
+  async updateUser(id: string, _item_: UpdateUserDto): Promise<User> {
+    const userToUpdate = await this.getUserById(id);
 
-    this.users[index] = {
-      ...user,
-      ..._item_,
-    };
+    userToUpdate.firstName = _item_.firstName;
+    userToUpdate.lastName = _item_.lastName;
+    userToUpdate.email = _item_.email;
 
-    return this.users[index];
+    await this.userRepository.save(userToUpdate);
+
+    return this.getUserById(id);
   }
 
-  deleteUser(_id_: string): void {
-    this.users = this.users.filter((i) => i.id !== _id_);
+  async deleteUser(id: string): Promise<void> {
+    this.userRepository.delete(id);
+  }
+
+  async prepareUserAddressesToSave(
+    address: CreateUserAddressDto[],
+  ): Promise<UserAddress[]> {
+    const addresses: UserAddress[] = [];
+    for (const add of address) {
+      const addressToSave = new UserAddress();
+
+      addressToSave.country = add.country;
+      addressToSave.city = add.city;
+      addressToSave.street = add.street;
+      addressToSave.number = add.number;
+
+      addresses.push(await this.userAddressRepository.save(addressToSave));
+    }
+
+    return addresses;
   }
 }

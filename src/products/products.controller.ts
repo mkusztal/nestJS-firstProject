@@ -23,40 +23,42 @@ export class ProductsController {
   constructor(private productRepository: ProductsDataService) {}
 
   @Get()
-  getAllProducts(): Array<ExternalProductDto> {
-    return this.productRepository
-      .getAllProducts()
-      .map(this.mapProductToExternal);
+  async getAllProducts(): Promise<ExternalProductDto[]> {
+    return (await this.productRepository.getAllProducts()).map((product) =>
+      this.mapProductToExternal(product),
+    );
   }
 
   @Get(':id')
-  getProductById(
+  async getProductById(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
-  ): ExternalProductDto {
+  ): Promise<ExternalProductDto> {
     return this.mapProductToExternal(this.productRepository.getProductById(id));
   }
 
-  @Post()
   @UseGuards(RoleGuard)
-  addProduct(@Body() _item_: CreateProductDto): ExternalProductDto {
-    return this.productRepository.addProduct(_item_);
+  @Post()
+  async addProduct(
+    @Body() _item_: CreateProductDto,
+  ): Promise<ExternalProductDto> {
+    return this.mapProductToExternal(
+      await this.productRepository.addProduct(_item_),
+    );
+  }
+  @Put(':id')
+  async updateProduct(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Body() _item_: UpdateProductDto,
+  ): Promise<ExternalProductDto> {
+    const product = await this.productRepository.updateProduct(id, _item_);
+    return this.mapProductToExternal(product);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  deleteProduct(@Param('id') _id_: string): void {
-    return this.productRepository.deleteProduct(_id_);
-  }
-
-  @Put(':id')
-  @HttpCode(500)
-  updateProduct(
-    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
-    @Body() product: UpdateProductDto,
-  ): ExternalProductDto {
-    return this.mapProductToExternal(
-      this.productRepository.updateProduct(id, product),
-    );
+  async deleteProduct(id: string): Promise<ExternalProductDto> {
+    await this.productRepository.deleteProduct(id);
+    return null;
   }
 
   mapProductToExternal(product: Product): ExternalProductDto {
@@ -64,6 +66,7 @@ export class ProductsController {
       ...product,
       createdAt: dateToArray(product.createdAt),
       updatedAt: dateToArray(product.updatedAt),
+      tags: product.tags.map((i) => i.name),
     };
   }
 }

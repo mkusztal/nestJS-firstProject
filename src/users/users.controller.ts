@@ -23,35 +23,37 @@ export class UsersController {
   instanceValidate = new UserValidatorService(this.userRepository);
 
   @Get()
-  getAllUser(): Array<ExternalUserDto> {
-    return this.userRepository.getAllUsers().map(this.mapUserToExternal);
+  async getAllUsers(): Promise<ExternalUserDto[]> {
+    return (await this.userRepository.getAllUsers()).map((user) =>
+      this.mapUserToExternal(user),
+    );
   }
 
   @Get(':id')
-  getProductById(
+  async getUserById(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
-  ): ExternalUserDto {
+  ): Promise<ExternalUserDto> {
     return this.mapUserToExternal(this.userRepository.getUserById(id));
   }
 
   @Post()
-  addUser(@Body() _item_: CreateUserDto): ExternalUserDto {
-    this.instanceValidate.validateUniqueEmail(_item_.email);
-    return this.userRepository.addUser(_item_);
+  async addProduct(@Body() _item_: CreateUserDto): Promise<ExternalUserDto> {
+    return this.mapUserToExternal(await this.userRepository.addUser(_item_));
   }
-
   @Put(':id')
-  updateProduct(
+  async updateUser(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() _item_: UpdateUserDto,
-  ): ExternalUserDto {
-    return this.mapUserToExternal(this.userRepository.updateUser(id, _item_));
+  ): Promise<ExternalUserDto> {
+    const user = await this.userRepository.updateUser(id, _item_);
+    return this.mapUserToExternal(user);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  deleteUser(@Param('id') _id_: string): void {
-    return this.userRepository.deleteUser(_id_);
+  async deleteUser(id: string): Promise<ExternalUserDto> {
+    await this.userRepository.deleteUser(id);
+    return null;
   }
 
   mapUserToExternal(user: User): ExternalUserDto {
