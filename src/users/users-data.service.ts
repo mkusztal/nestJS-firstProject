@@ -16,12 +16,12 @@ export class UsersDataService {
 
   private users: Array<User> = [];
 
-  async getAllUsers(): Promise<Array<User>> {
-    return this.userRepository.find();
+  async getAllUsers(): Promise<User[]> {
+    return await this.userRepository.find();
   }
 
   async getUserById(id: string): Promise<User> {
-    return this.userRepository.findOne(id);
+    return await this.userRepository.findOne(id);
   }
 
   async addUser(_item_: CreateUserDto): Promise<User> {

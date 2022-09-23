@@ -1,4 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  JoinTable,
+} from 'typeorm';
 import { Roles } from '../enums/roles.enum';
 import { UserAddress } from './userAddress.entity';
 
@@ -21,8 +27,17 @@ export class User {
   @Column('enum', {
     enum: Roles,
   })
-  role: Roles;
+  role: Roles[];
 
-  @OneToMany((type) => UserAddress, (address) => address.user)
+  @OneToMany(() => UserAddress, (address) => address.user)
+  @JoinTable({
+    name: 'users_addresses',
+    joinColumn: {
+      name: 'user',
+    },
+    inverseJoinColumn: {
+      name: 'addressId',
+    },
+  })
   address?: UserAddress[];
 }

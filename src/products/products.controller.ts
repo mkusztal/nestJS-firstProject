@@ -15,7 +15,8 @@ import { dateToArray } from 'src/shared/helpers/date.helper';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ExternalProductDto } from './dto/external-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { Product } from './interfaces/product.interface';
+// import { Product } from './interfaces/product.interface';
+import { Product } from './db/products.entity';
 import { ProductsDataService } from './products-data.service';
 
 @Controller('products')
@@ -33,7 +34,9 @@ export class ProductsController {
   async getProductById(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ): Promise<ExternalProductDto> {
-    return this.mapProductToExternal(this.productRepository.getProductById(id));
+    return this.mapProductToExternal(
+      await this.productRepository.getProductById(id),
+    );
   }
 
   @UseGuards(RoleGuard)

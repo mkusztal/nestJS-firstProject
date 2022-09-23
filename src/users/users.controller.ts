@@ -12,7 +12,7 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { ExternalUserDto } from './dto/external-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './interfaces/user.interface';
+import { User } from './db/users.entity';
 import { UserValidatorService } from './user-validator.service';
 import { UsersDataService } from './users-data.service';
 
@@ -33,7 +33,7 @@ export class UsersController {
   async getUserById(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ): Promise<ExternalUserDto> {
-    return this.mapUserToExternal(this.userRepository.getUserById(id));
+    return this.mapUserToExternal(await this.userRepository.getUserById(id));
   }
 
   @Post()
@@ -58,7 +58,12 @@ export class UsersController {
 
   mapUserToExternal(user: User): ExternalUserDto {
     return {
-      ...user,
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      address: user.address,
+      role: user.role,
     };
   }
 }

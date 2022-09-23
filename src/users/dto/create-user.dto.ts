@@ -8,7 +8,6 @@ import {
   IsEnum,
 } from 'class-validator';
 import { arrayToDate } from 'src/shared/helpers/date.helper';
-import { UserValidatorService } from '../user-validator.service';
 
 export class CreateUserDto {
   @IsNotEmpty()
