@@ -16,12 +16,12 @@ export class UsersDataService {
 
   private users: Array<User> = [];
 
-  async getAllUsers(): Promise<User[]> {
-    return await this.userRepository.find();
+  getAllUsers(): Promise<User[]> {
+    return this.userRepository.find();
   }
 
-  async getUserById(id: string): Promise<User> {
-    return await this.userRepository.findOne(id);
+  getUserById(id: string): Promise<User> {
+    return this.userRepository.findOneBy({ id });
   }
 
   async addUser(_item_: CreateUserDto): Promise<User> {
@@ -30,14 +30,14 @@ export class UsersDataService {
     userToSave.firstName = _item_.firstName;
     userToSave.lastName = _item_.lastName;
     userToSave.email = _item_.email;
-    //userToSave.role = _item_.role;
+    userToSave.role = _item_.role;
     userToSave.address = await this.prepareUserAddressesToSave(_item_.address);
 
     return this.userRepository.save(userToSave);
   }
 
-  getUserByEmail(email: string): User {
-    return this.users.find((user) => user.email === email);
+  getUserByEmail(email: string): Promise<User> {
+    return this.userRepository.findOneBy({ email });
   }
 
   async updateUser(id: string, _item_: UpdateUserDto): Promise<User> {

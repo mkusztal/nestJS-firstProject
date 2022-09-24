@@ -17,12 +17,12 @@ export class ProductsDataService {
 
   newId = uuidv4();
 
-  async getAllProducts(): Promise<Product[]> {
-    return await this.productRepository.find();
+  getAllProducts(): Promise<Product[]> {
+    return this.productRepository.find();
   }
 
-  async getProductById(id: string): Promise<Product> {
-    return await this.productRepository.findOne(id);
+  getProductById(id: string): Promise<Product> {
+    return this.productRepository.findOneBy({ id: id });
   }
 
   async addProduct(item: CreateProductDto): Promise<Product> {

@@ -4,15 +4,14 @@ import { UsersDataService } from './users-data.service';
 import { UserValidatorService } from './user-validator.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserRepository } from './db/user.repository';
-import { UserAddress } from './db/userAddress.entity';
+import { UserAddressRepository } from './db/userAddress.repository';
 
 @Module({
-  controllers: [UsersController],
-  providers: [UsersDataService, UserValidatorService],
-
   imports: [
     TypeOrmModule.forFeature([UserRepository]),
-    TypeOrmModule.forFeature([UserAddress]),
+    TypeOrmModule.forFeature([UserAddressRepository]),
   ],
+  controllers: [UsersController],
+  providers: [UsersDataService, UserValidatorService],
 })
 export class UsersModule {}
