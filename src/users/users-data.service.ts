@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { CreateUserAddressDto, CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserAddressDto, UpdateUserDto } from './dto/update-user.dto';
 import { User } from './db/users.entity';
 import { UserRepository } from './db/user.repository';
 import { UserAddressRepository } from './db/userAddress.repository';
@@ -57,7 +57,7 @@ export class UsersDataService {
   }
 
   async prepareUserAddressesToSave(
-    address: CreateUserAddressDto[],
+    address: CreateUserAddressDto[] | UpdateUserAddressDto[],
   ): Promise<UserAddress[]> {
     const addresses: UserAddress[] = [];
     for (const add of address) {
