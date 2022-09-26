@@ -6,6 +6,6 @@ export interface ExternalUserDto {
   firstName: string;
   lastName: string;
   email: string;
-  address?: UserAddress[];
+  address: UserAddress[];
   role: Array<Roles>;
 }

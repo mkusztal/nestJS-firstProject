@@ -59,7 +59,7 @@ export class UsersDataService {
   async prepareUserAddressesToSave(
     address: CreateUserAddressDto[] | UpdateUserAddressDto[],
   ): Promise<UserAddress[]> {
-    const addresses: UserAddress[] = [];
+    const addresses = [];
     for (const add of address) {
       const addressToSave = new UserAddress();
 

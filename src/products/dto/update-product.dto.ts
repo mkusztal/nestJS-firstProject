@@ -5,4 +5,5 @@ export interface UpdateProductDto {
   price: number;
   count: number;
   tags: Array<Tags>;
+  updatedAt: Array<number>;
 }
