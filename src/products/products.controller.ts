@@ -59,8 +59,11 @@ export class ProductsController {
 
   @Delete(':id')
   @HttpCode(204)
-  async deleteProduct(id: string): Promise<void> {
+  async deleteProduct(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ): Promise<ExternalProductDto> {
     await this.productRepository.deleteProduct(id);
+    return null;
   }
 
   mapProductToExternal(product: Product): ExternalProductDto {
