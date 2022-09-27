@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   JoinTable,
+  ManyToMany,
 } from 'typeorm';
 import { Tag } from './tag.entity';
 
@@ -35,6 +36,7 @@ export class Product {
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 
+  @ManyToMany(() => Tag)
   @JoinTable({
     name: 'products_tags',
     joinColumn: {

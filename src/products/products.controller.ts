@@ -59,9 +59,8 @@ export class ProductsController {
 
   @Delete(':id')
   @HttpCode(204)
-  async deleteProduct(id: string): Promise<ExternalProductDto> {
+  async deleteProduct(id: string): Promise<void> {
     await this.productRepository.deleteProduct(id);
-    return null;
   }
 
   mapProductToExternal(product: Product): ExternalProductDto {
@@ -69,7 +68,7 @@ export class ProductsController {
       ...product,
       createdAt: dateToArray(product.createdAt),
       updatedAt: dateToArray(product.updatedAt),
-      tags: product.tags.map((i) => i.name),
+      tags: product.tags?.map((i) => i.name),
     };
   }
 }
