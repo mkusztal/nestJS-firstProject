@@ -26,12 +26,6 @@ export class UsersDataService {
   }
 
   async addUser(_item_: CreateUserDto): Promise<User> {
-    const checkEmail = await this.getUserByEmail(_item_.email);
-
-    if (checkEmail) {
-      throw new UserRequireUniqueEmailException();
-    }
-
     const userToSave = new User();
 
     userToSave.firstName = _item_.firstName;
