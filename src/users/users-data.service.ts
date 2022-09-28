@@ -6,6 +6,7 @@ import { User } from './db/users.entity';
 import { UserRepository } from './db/user.repository';
 import { UserAddressRepository } from './db/userAddress.repository';
 import { UserAddress } from './db/userAddress.entity';
+import { UserRequireUniqueEmailException } from './exception/unique-email-exception';
 
 @Injectable()
 export class UsersDataService {
@@ -25,6 +26,12 @@ export class UsersDataService {
   }
 
   async addUser(_item_: CreateUserDto): Promise<User> {
+    const checkEmail = await this.getUserByEmail(_item_.email);
+
+    if (checkEmail) {
+      throw new UserRequireUniqueEmailException();
+    }
+
     const userToSave = new User();
 
     userToSave.firstName = _item_.firstName;
