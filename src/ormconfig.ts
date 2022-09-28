@@ -6,5 +6,11 @@ export = {
   password: '79135803',
   database: 'products',
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
-  synchronize: true,
+  synchronize: false,
+  dropSchema: false,
+  migrationsRun: true,
+  migrations: [__dirname + '/db/migrations/**/*{.ts,.js}'],
+  cli: {
+    migrationsDir: 'src/db/migrations',
+  },
 };
