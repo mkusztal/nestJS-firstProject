@@ -6,8 +6,8 @@ import { Product } from 'src/products/db/products.entity';
 export class InitData1664470368134 implements MigrationInterface {
   async up(queryRunner: QueryRunner): Promise<void> {
     this.saveTags();
-    this.saveProduct(await this.saveTags());
-    this.saveUser();
+    this.saveProducts(await this.saveTags());
+    this.saveUsers();
   }
 
   async down(queryRunner: QueryRunner): Promise<void> {
@@ -41,43 +41,57 @@ export class InitData1664470368134 implements MigrationInterface {
     return tagsArr;
   }
 
-  private async saveProduct(tags: Tag[]): Promise<void> {
-    const product = {
-      name: faker.commerce.productName(),
-      price: faker.commerce.price(),
-      count: faker.datatype.number(100),
-      tags: [tags[0], tags[1]],
-      createdAt: faker.date.past(),
-      updatedAt: faker.date.past(),
-    };
+  private async saveProducts(tags: Tag[]): Promise<void> {
+    const products = [];
 
-    await getRepository('Product').save(product);
+    for (let i = 0; i < 100; i++) {
+      const product = {
+        name: faker.commerce.productName(),
+        price: faker.commerce.price(),
+        count: faker.datatype.number(100),
+        tags: [tags[0], tags[1]],
+        createdAt: faker.date.past(),
+        updatedAt: faker.date.past(),
+      };
+      products.push(product);
+    }
+    await getRepository('Product').save(products);
   }
 
-  private async saveUser(): Promise<void> {
-    const savedId = faker.datatype.uuid();
+  private async saveUsers(): Promise<void> {
+    const users = [];
+    for (let i = 0; i < 100; i++) {
+      const savedId = faker.datatype.uuid();
 
-    const user = {
-      id: savedId,
-      firstName: faker.name.firstName(),
-      lastName: faker.name.lastName(),
-      email: faker.internet.email(),
-      dateOfBirth: faker.date.past(),
-      address: await this.saveUserAddress(),
-      role: 'ADMIN',
-    };
+      const user = {
+        id: savedId,
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        email: faker.internet.email(),
+        dateOfBirth: faker.date.past(),
+        address: await this.saveUserAddress(),
+        role: 'ADMIN',
+      };
 
-    await getRepository('User').save(user);
+      users.push(user);
+    }
+
+    await getRepository('User').save(users);
   }
 
   private async saveUserAddress(): Promise<void> {
-    const userAddress = {
-      country: faker.address.country(),
-      city: faker.address.city(),
-      street: faker.address.street(),
-      number: faker.address.buildingNumber(),
-    };
+    const userAddresses = [];
+    for (let i = 0; i < 100; i++) {
+      const userAddress = {
+        country: faker.address.country(),
+        city: faker.address.city(),
+        street: faker.address.street(),
+        number: faker.address.buildingNumber(),
+      };
 
-    await getRepository('UserAddress').save(userAddress);
+      userAddresses.push(userAddress);
+    }
+
+    await getRepository('UserAddress').save(userAddresses);
   }
 }
