@@ -13,4 +13,5 @@ export = {
   cli: {
     migrationsDir: 'src/db/migrations',
   },
+  subscribers: [__dirname + '/db/subscribers/**/*{.ts,.js}'],
 };

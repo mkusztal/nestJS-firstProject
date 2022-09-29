@@ -7,12 +7,15 @@ import { UserRepository } from './db/user.repository';
 import { UserAddressRepository } from './db/userAddress.repository';
 import { UserAddress } from './db/userAddress.entity';
 import { UserRequireUniqueEmailException } from './exception/unique-email-exception';
+import { Connection, EntityManager } from 'typeorm';
+import { async } from 'rxjs';
 
 @Injectable()
 export class UsersDataService {
   constructor(
     private userRepository: UserRepository,
     private userAddressRepository: UserAddressRepository,
+    private connection: Connection,
   ) {}
 
   private users: Array<User> = [];
@@ -26,15 +29,20 @@ export class UsersDataService {
   }
 
   async addUser(_item_: CreateUserDto): Promise<User> {
-    const userToSave = new User();
+    return this.connection.transaction(async (manager: EntityManager) => {
+      const userToSave = new User();
 
-    userToSave.firstName = _item_.firstName;
-    userToSave.lastName = _item_.lastName;
-    userToSave.email = _item_.email;
-    userToSave.role = _item_.role;
-    userToSave.address = await this.prepareUserAddressesToSave(_item_.address);
+      userToSave.firstName = _item_.firstName;
+      userToSave.lastName = _item_.lastName;
+      userToSave.email = _item_.email;
+      userToSave.role = _item_.role;
+      userToSave.address = await this.prepareUserAddressesToSave(
+        _item_.address,
+        manager.getCustomRepository(UserAddressRepository),
+      );
 
-    return this.userRepository.save(userToSave);
+      return await manager.getCustomRepository(UserRepository).save(userToSave);
+    });
   }
 
   getUserByEmail(email: string): Promise<User> {
@@ -42,15 +50,21 @@ export class UsersDataService {
   }
 
   async updateUser(id: string, _item_: UpdateUserDto): Promise<User> {
-    const userToUpdate = await this.getUserById(id);
+    return this.connection.transaction(async (manager: EntityManager) => {
+      const userToUpdate = await this.getUserById(id);
 
-    userToUpdate.firstName = _item_.firstName;
-    userToUpdate.lastName = _item_.lastName;
-    userToUpdate.email = _item_.email;
+      userToUpdate.firstName = _item_.firstName;
+      userToUpdate.lastName = _item_.lastName;
+      userToUpdate.email = _item_.email;
+      userToUpdate.address = await this.prepareUserAddressesToSave(
+        _item_.address,
+        manager.getCustomRepository(UserAddressRepository),
+      );
 
-    await this.userRepository.save(userToUpdate);
-
-    return this.getUserById(id);
+      return await manager
+        .getCustomRepository(UserRepository)
+        .save(userToUpdate);
+    });
   }
 
   async deleteUser(id: string): Promise<void> {
@@ -59,6 +73,7 @@ export class UsersDataService {
 
   async prepareUserAddressesToSave(
     address: CreateUserAddressDto[] | UpdateUserAddressDto[],
+    userAddressRepository: UserAddressRepository,
   ): Promise<UserAddress[]> {
     const addresses = [];
     for (const add of address) {
@@ -72,6 +87,6 @@ export class UsersDataService {
       addresses.push(await this.userAddressRepository.save(addressToSave));
     }
 
-    return addresses;
+    return await userAddressRepository.save(address);
   }
 }
