@@ -1,7 +1,7 @@
 import { Tag } from 'src/products/db/tag.entity';
-import { getRepository, MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm';
 import { faker } from '@faker-js/faker';
-import { Product } from 'src/products/db/products.entity';
+import { AppDataSource } from 'src/app.datasource';
 
 export class InitData1664470368134 implements MigrationInterface {
   async up(queryRunner: QueryRunner): Promise<void> {
@@ -13,7 +13,7 @@ export class InitData1664470368134 implements MigrationInterface {
   async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TABLE "post" RENAME COLUMN "name" TO "title"`,
-    ); // reverts things made in "up" method
+    );
   }
 
   private async saveTags(): Promise<Tag[]> {
@@ -33,7 +33,7 @@ export class InitData1664470368134 implements MigrationInterface {
     for (const tag of tags) {
       const tagToSave = new Tag();
       tagToSave.name = tag.name;
-      tagsArr.push(await getRepository('Tag').save(tagToSave));
+      tagsArr.push(await AppDataSource.getRepository('Tag').save(tagToSave));
     }
 
     console.log('Tags saved');
@@ -55,7 +55,7 @@ export class InitData1664470368134 implements MigrationInterface {
       };
       products.push(product);
     }
-    await getRepository('Product').save(products);
+    await AppDataSource.getRepository('Product').save(products);
   }
 
   private async saveUsers(): Promise<void> {
@@ -76,7 +76,7 @@ export class InitData1664470368134 implements MigrationInterface {
       users.push(user);
     }
 
-    await getRepository('User').save(users);
+    await AppDataSource.getRepository('User').save(users);
   }
 
   private async saveUserAddress(): Promise<void> {
@@ -92,6 +92,6 @@ export class InitData1664470368134 implements MigrationInterface {
       userAddresses.push(userAddress);
     }
 
-    await getRepository('UserAddress').save(userAddresses);
+    await AppDataSource.getRepository('UserAddress').save(userAddresses);
   }
 }

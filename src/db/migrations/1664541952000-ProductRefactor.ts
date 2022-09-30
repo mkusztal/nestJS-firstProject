@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class ProductRefactor implements MigrationInterface {
+export class ProductRefactor1664541952000 implements MigrationInterface {
   async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TABLE "post" RENAME COLUMN "title" TO "name"`,

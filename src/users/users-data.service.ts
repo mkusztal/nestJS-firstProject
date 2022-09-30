@@ -6,9 +6,7 @@ import { User } from './db/users.entity';
 import { UserRepository } from './db/user.repository';
 import { UserAddressRepository } from './db/userAddress.repository';
 import { UserAddress } from './db/userAddress.entity';
-import { UserRequireUniqueEmailException } from './exception/unique-email-exception';
 import { Connection, EntityManager } from 'typeorm';
-import { async } from 'rxjs';
 
 @Injectable()
 export class UsersDataService {
@@ -38,7 +36,7 @@ export class UsersDataService {
       userToSave.role = _item_.role;
       userToSave.address = await this.prepareUserAddressesToSave(
         _item_.address,
-        manager.getCustomRepository(UserAddressRepository),
+        manager.connection.getCustomRepository(UserAddressRepository),
       );
 
       return await manager.getCustomRepository(UserRepository).save(userToSave);

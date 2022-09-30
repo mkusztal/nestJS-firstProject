@@ -9,7 +9,7 @@ export = {
   synchronize: false,
   dropSchema: false,
   migrationsRun: true,
-  migrations: [__dirname + '/db/migrations/**/*{.ts,.js}'],
+  migrations: [__dirname + '/db/migrations/**/*{.ts}'],
   cli: {
     migrationsDir: 'src/db/migrations',
   },

@@ -41,6 +41,7 @@ export class UsersController {
     this.instanceValidate.validateUniqueEmail(_item_.email);
     return this.mapUserToExternal(await this.userRepository.addUser(_item_));
   }
+
   @Put(':id')
   async updateUser(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
