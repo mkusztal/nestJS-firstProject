@@ -28,12 +28,6 @@ export class UsersDataService {
   }
 
   async addUser(_item_: CreateUserDto): Promise<User> {
-    const checkUniqueEmail = await this.getUserByEmail(_item_.email);
-
-    if (checkUniqueEmail) {
-      throw new UserRequireUniqueEmailException();
-    }
-
     return this.connection.transaction(async (manager: EntityManager) => {
       const userToSave = new User();
 
