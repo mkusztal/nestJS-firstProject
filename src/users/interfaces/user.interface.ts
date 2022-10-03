@@ -10,8 +10,8 @@ export interface User {
 }
 
 interface UserAddress {
-  country: 'string';
-  city: 'string';
-  street: 'string';
+  country: string;
+  city: string;
+  street: string;
   number: number;
 }

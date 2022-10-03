@@ -24,7 +24,7 @@ export class CreateUserDto {
 
   @ValidateNested({ each: true })
   @Type(() => CreateUserAddressDto)
-  address?: Array<CreateUserAddressDto>;
+  address: Array<CreateUserAddressDto>;
 
   @IsEnum(Roles, { each: true })
   role: Roles[];

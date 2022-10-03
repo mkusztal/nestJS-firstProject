@@ -6,8 +6,7 @@ import { User } from './db/users.entity';
 import { UserRepository } from './db/user.repository';
 import { UserAddressRepository } from './db/userAddress.repository';
 import { UserAddress } from './db/userAddress.entity';
-import { Connection, EntityManager } from 'typeorm';
-//import { UserRequireUniqueEmailException } from './exception/unique-email-exception';
+import { Connection } from 'typeorm';
 
 @Injectable()
 export class UsersDataService {
@@ -28,7 +27,7 @@ export class UsersDataService {
   }
 
   async addUser(_item_: CreateUserDto): Promise<User> {
-    return this.connection.transaction(async (manager: EntityManager) => {
+    return this.connection.transaction(async () => {
       const userToSave = new User();
 
       userToSave.firstName = _item_.firstName;
@@ -37,10 +36,10 @@ export class UsersDataService {
       userToSave.role = _item_.role;
       userToSave.address = await this.prepareUserAddressesToSave(
         _item_.address,
-        manager.connection.getCustomRepository(UserAddressRepository),
+        this.userAddressRepository,
       );
 
-      return await manager.getCustomRepository(UserRepository).save(userToSave);
+      return await this.userAddressRepository.save(userToSave);
     });
   }
 
@@ -49,7 +48,7 @@ export class UsersDataService {
   }
 
   async updateUser(id: string, _item_: UpdateUserDto): Promise<User> {
-    return this.connection.transaction(async (manager: EntityManager) => {
+    return this.connection.transaction(async () => {
       const userToUpdate = await this.getUserById(id);
 
       userToUpdate.firstName = _item_.firstName;
@@ -57,12 +56,10 @@ export class UsersDataService {
       userToUpdate.email = _item_.email;
       userToUpdate.address = await this.prepareUserAddressesToSave(
         _item_.address,
-        manager.getCustomRepository(UserAddressRepository),
+        this.userAddressRepository,
       );
 
-      return await manager
-        .getCustomRepository(UserRepository)
-        .save(userToUpdate);
+      return await this.userAddressRepository.save(userToUpdate);
     });
   }
 
