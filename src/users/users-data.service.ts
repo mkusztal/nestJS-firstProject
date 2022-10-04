@@ -39,7 +39,7 @@ export class UsersDataService {
         this.userAddressRepository,
       );
 
-      return await this.userAddressRepository.save(userToSave);
+      return await this.userRepository.save(userToSave);
     });
   }
 
